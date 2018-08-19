@@ -1,10 +1,11 @@
-library(readr)
+library(readr) #ler dados
 library(magrittr)
 library(dplyr)
-library(nycflights13)
+library(nycflights13) #dados do aeroporto
 library(tidyr)
 library(stringr)
 library(tidyverse)
+library(openxlsx) #escrever em xlsx
 
 
 #
@@ -336,3 +337,29 @@ resultado <-rbind(aprovados,eliminados) %>%
   right_join(participantes) %>% select(Nome,Estado,Idade,Pontuacao,Resultado) %>% arrange(-Pontuacao)
 
 aprovados %>% right_join(participantes)
+
+#### cap 7 ####
+
+participantes <- data.frame(
+  Nome = c('Carlos', 'Maurício', 'Ana Maria', 'Rebeca', 'Patrícia'),
+  Estado = c('Brasília', 'Minas Gerais', 'Goiás', 'São Paulo', 'Ceará'),
+  Idade = c(23, 24, 22, 29, 28)
+)
+save(participantes,file = "participantes.Rdata")
+rm(participantes)
+
+load("participantes.Rdata")
+str(participantes)
+
+write.csv(participantes, file = 'teste1.CSV') #escrevendo em csv
+library(openxlsx)
+write.xlsx(participantes, file = 'teste2.xlsx') #escrevendo em xlsx
+
+#1
+write.csv(finish, file = 'aeroporto.CSV')
+#2
+save(finish, file = "Aeroporto.Rdata")
+rm(finish)
+
+load("Aeroporto.Rdata")
+str(finish)
