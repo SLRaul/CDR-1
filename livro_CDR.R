@@ -6,6 +6,8 @@ library(tidyr)
 library(stringr)
 library(tidyverse)
 library(openxlsx) #escrever em xlsx
+library(jsonlite) # obter e usar dados de API
+library(rvest) #facilita o consumo de dados em html
 
 
 #
@@ -363,3 +365,37 @@ rm(finish)
 
 load("Aeroporto.Rdata")
 str(finish)
+
+#### cap 8 ####
+library(jsonlite)
+
+hadley.rep <- jsonlite::fromJSON("https://api.github.com/users/hadley/repos")
+dim(hadley.rep)
+head(hadley.rep[c('name', 'description')], 15)
+
+#o link do livro nao deu certo "https://dadosabertos.camara.leg.br/api/v2/proposicoes", nem oque seria o certo
+proposicoes <- jsonlite::fromJSON("https://dadosabertos.camara.leg.br/swagger/api.html/proposicoes/legislaturas")
+head(proposicoes$dados %>% select(siglaTipo, numero,ementa ,ementa))
+
+# Quandl: pacote que fornece diversos dados econômicos de diversos países;
+# Rfacebook:pacote que facilita o uso da API do facebook(requercadastroprévio);
+# twitterR:pacoteque facilita o uso da API do twitter(requercadastroprévio);
+# ggmap: pacote que facilita o uso da API do googlemaps  
+
+library(rvest) #facilita o consumo de dados em html
+
+html <- read_html("https://pt.wikipedia.org/wiki/Lista_de_redes_de_televis%C3%A3o_do_Brasil")
+html.table <- html %>% html_node('table')
+dados <- html.tabl %>% html_table()
+dados<- dados %>% select(-'Lista de emissoras')
+
+#exercícios
+#1
+fut <- read_html("http://globoesporte.globo.com/futebol/brasileirao-serie-a/")
+fut.table <- fut %>% html_node('table')
+fut.table.final <- fut.table %>%html_table()
+fut.table.final <- fut.table.final[,c(1,2)]
+#2
+idh <- read_html('https://pt.wikipedia.org/wiki/%C3%8Dndice_de_Desenvolvimento_Humano')
+idh.table <- idh %>% html_node('table')
+idh.table.final <- idh.table %>% html_table()
