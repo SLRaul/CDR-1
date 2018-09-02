@@ -8,7 +8,7 @@ library(tidyverse)
 library(openxlsx) #escrever em xlsx
 library(jsonlite) # obter e usar dados de API
 library(rvest) #facilita o consumo de dados em html
-
+library(ggplot2) #construção de gráficos
 
 #
 #### cap 3 ####
@@ -399,3 +399,68 @@ fut.table.final <- fut.table.final[,c(1,2)]
 idh <- read_html('https://pt.wikipedia.org/wiki/%C3%8Dndice_de_Desenvolvimento_Humano')
 idh.table <- idh %>% html_node('table')
 idh.table.final <- idh.table %>% html_table()
+
+#### cap 9 ####
+
+library(ggplot2)
+data('mtcars')
+
+g <- ggplot(mtcars) # inicia o plot
+# Adicionar pontos (geom_point) e
+# vamos mapear variáveis a elementos estéticos dos pontos
+# Size=3 define o tamanho de todos os pontos
+g <- g + geom_point(aes(x = hp, y = mpg, color = factor(am)), size = 3)
+
+#altera a escala de cores
+g <- g + scale_color_manual("Automatic", values = c('red', 'blue'), labels = c('Yes', 'No'))
+
+#rotulos/titulos
+g <- g + labs(title = 'Relação entre potêcia, consumo e tipo de câmbio', y = 'Consumo', x = 'Potência')
+g
+
+#fazendo em um único bloco
+ggplot(mtcars) +
+  geom_point(aes(x = hp, y = mpg, color = factor(am)), size = 3) +
+  scale_color_manual("Automatic", values = c('red', 'blue'), labels = c('Yes', 'No')) +
+  labs(title = 'Relação entre potêcia, consumo e tipo de câmbio', y = 'Consumo', x = 'Potência')
+
+####### 9.1
+g1 <- ggplot(mtcars, aes(y = mpg, x = disp)) + geom_point(); g1
+
+###### 9.2
+#library(dplyr)
+mtcars <- mtcars %>%mutate(names = row.names(mtcars))
+ggplot(mtcars, aes(x = disp, y = mpg)) + geom_point() + geom_smooth() 
+
+###### 9.3
+ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) + geom_point() +
+  scale_color_manual(values = c('orange', 'purple', 'sky blue')) # mudar a cor
+
+ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) + geom_point() +
+  scale_color_manual(values = c('green', 'dark blue', 'red'))+
+  scale_x_continuous(name = 'Petal.Length', breaks = 1:7) + #break diz o tamanho da reta
+  scale_y_continuous(name = 'Petal.Width', breaks = 0:3, limits = c(0,3))
+
+
+#scale_x_continuous(name = waiver(), breaks = waiver(), minor_breaks = waiver(), labels = waiver(),
+#                   limits = NULL, expand = waiver(), oob = censor, na.value = NA_real_,
+#                   trans = 'identity')
+#scale_y_continuous(name = waiver(), breaks = waiver(), minor_breaks = waiver(), labels = waiver(),
+#                   limits = NULL, expand = waiver(), oob = censor, na.value = NA_real_,
+#                   trans = 'identity')
+
+library(ISLR)
+ggplot(Wage, aes(x = age, y = wage, color = education)) + geom_point() +
+  scale_x_continuous('idade', breaks = seq(0,80, 5), expand = c(0, 5)) + # break diz os pulos do vetor,5 em 5 nesse caso
+  scale_y_continuous('salario', labels = function(x) paste0("US$", x), limits = c(0, 400))
+
+#scale_x_discrete(..., expand = waiver(), position = "bottom")
+#scale_y_discrete(..., expand = waiver(), position = "left")
+
+ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
+  scale_x_discrete('calote', labels = c('sim', 'não')) + 
+  labs(y = 'Valor devido depois do pagamento')
+#mudando a ordem
+ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
+  scale_x_discrete('calote',limits =  c('Yes', 'No'),labels = c('sim', 'não')) + 
+  labs(y = 'Valor devido depois do pagamento')
