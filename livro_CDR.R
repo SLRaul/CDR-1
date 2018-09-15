@@ -9,6 +9,7 @@ library(openxlsx) #escrever em xlsx
 library(jsonlite) # obter e usar dados de API
 library(rvest) #facilita o consumo de dados em html
 library(ggplot2) #construção de gráficos
+library(RColorBrewer) #disco de cores para graficos
 
 #
 #### cap 3 ####
@@ -458,9 +459,53 @@ ggplot(Wage, aes(x = age, y = wage, color = education)) + geom_point() +
 #scale_y_discrete(..., expand = waiver(), position = "left")
 
 ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
-  scale_x_discrete('calote', labels = c('sim', 'não')) + 
+  scale_x_discrete('calote', labels = c('não', 'sim')) + 
   labs(y = 'Valor devido depois do pagamento')
 #mudando a ordem
 ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
   scale_x_discrete('calote',limits =  c('Yes', 'No'),labels = c('sim', 'não')) + 
   labs(y = 'Valor devido depois do pagamento')
+
+#aceita apenas em dia, mes, ano // date
+#scale_y/x_date(name = waiver(), breaks = waiver(), date_breaks = waiver(),
+ #            labels = waiver(), date_labels = waiver(), minor_breaks = waiver(),
+  #           date_minor_breaks = waiver(), limits = NULL, expand = waiver())
+#aceita em tempi/horario // POSIXct
+#scale_x/y_datetime(name = waiver(), breaks = waiver(), date_breaks = waiver(),
+ #                labels = waiver(), date_labels = waiver(), minor_breaks = waiver(),
+  #               date_minor_breaks = waiver(), limits = NULL, expand = waiver())
+
+# o argumento date_labes possibilidades de alterar o modo como as datas são apresentadas
+
+ggplot(economics, aes(x = date, y = unemploy)) + geom_line()
+
+#alterando as datas
+ggplot(economics, aes(x = date, y = unemploy)) + geom_line() + scale_x_date(date_labels = "%b%Y")
+#"%b%Y" definir o formato de data
+help("strptime") #diz os formatos de data
+
+ggplot(economics, aes(x = date, y = unemploy)) + geom_line() +
+  scale_x_date(date_breaks = '2 year', date_labels = '%Y') #date_breaks mostra os intervalos do eixo x
+
+#outra forma de fazer
+seq_datas <- seq.Date(as.Date('1970-01-01'), as.Date('2015-04-01'), by = '5 years')
+ggplot(economics, aes(x = date, y = unemploy)) + geom_line() +
+  scale_x_date(breaks = seq_datas, date_labels = '%Y')
+
+library(RColorBrewer) #
+display.brewer.all(n= NULL, type = 'all', select = NULL, exact.n = TRUE, colorblindFriendly = FALSE)
+
+paleta.gradient <- brewer.pal(n = 9, name = 'Reds')
+
+Credit %>% group_by(Cards, Student) %>% summarise(Balance = mean(Balance), n = n()) %>%
+  ggplot(aes(x = Cards, y = Student, fill = Balance)) + geom_tile() +
+  scale_fill_gradientn(colours = rev(paleta.gradient)) + scale_x_continuous(breaks = 1:9)
+
+library(viridisLite)
+Credit %>% group_by(Cards, Student) %>% summarise(Balance = mean(Balance), n = n()) %>%
+  ggplot(aes(x = Cards, y = Student, fill = Balance)) + geom_tile() +
+  viridis::scale_fill_viridis() + scale_x_continuous(breaks = 1:9)
+
+#mudando as cores manualmente
+ggplot(Wage, aes(y = wage, x = age, color = education)) + geom_point() +
+  scale_color_manual(values = c(c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854")))
