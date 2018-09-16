@@ -4,7 +4,7 @@ library(dplyr)
 library(nycflights13) #dados do aeroporto
 library(tidyr)
 library(stringr)
-library(tidyverse)
+library(tidyverse) #tudo
 library(openxlsx) #escrever em xlsx
 library(jsonlite) # obter e usar dados de API
 library(rvest) #facilita o consumo de dados em html
@@ -509,3 +509,33 @@ Credit %>% group_by(Cards, Student) %>% summarise(Balance = mean(Balance), n = n
 #mudando as cores manualmente
 ggplot(Wage, aes(y = wage, x = age, color = education)) + geom_point() +
   scale_color_manual(values = c(c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854")))
+
+#para formato grid
+#facet_grid(facets, margins = FALSE, scales = "fixed", space = "fixed", shrink = TRUE,
+#          labeller = "label_value", as.table = TRUE, switch = NULL, drop = TRUE)
+#para formato wrap; converte paieneis de uma dimensão para duas dimensões 
+#facet_wrap(facets, nrow = NULL, ncol = NULL, scales = "fixed", shrink = TRUE,
+#          labeller = "label_value", as.table = TRUE, switch = NULL, drop = TRUE,dir = "h")
+
+#exemplo
+ggplot(diamonds, aes(x = carat, y = price )) + geom_point()
+
+# com facet_wrap; comparar com as relações com diferentes grupos
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + facet_wrap(~ cut)
+#usamos o cut para mostras os graficos dessa variavel
+
+#fixando o eixo y
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + facet_wrap(~cut, scales = 'free_y')
+#fixando o eixo x
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + facet_wrap(~cut, scales = 'free_x')
+
+#com facet_grid
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + facet_grid(clarity ~ cut)
+#usado para o cruzamento de variaveis, nesse caso de clarity e cut
+
+#alterando os rotulos
+nomes_cut <- c(Fair = "FAIR", Good = "GOOD", `Very Good` = "VERY GOOD",
+               Premium = "PREMIUM", Ideal = "IDEAL")
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() +
+  facet_wrap(~cut, scales = 'free_y', labeller = labeller(cut = nomes_cut))
+
