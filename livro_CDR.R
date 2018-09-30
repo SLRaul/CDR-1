@@ -10,6 +10,8 @@ library(jsonlite) # obter e usar dados de API
 library(rvest) #facilita o consumo de dados em html
 library(ggplot2) #construção de gráficos
 library(RColorBrewer) #disco de cores para graficos
+library(ggThemeAssist) #modificar temas dos graficos manualmente
+library(hrbrthemes) #tema interessante usado no cap 9
 
 #
 #### cap 3 ####
@@ -510,6 +512,7 @@ Credit %>% group_by(Cards, Student) %>% summarise(Balance = mean(Balance), n = n
 ggplot(Wage, aes(y = wage, x = age, color = education)) + geom_point() +
   scale_color_manual(values = c(c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854")))
 
+#9.4
 #para formato grid
 #facet_grid(facets, margins = FALSE, scales = "fixed", space = "fixed", shrink = TRUE,
 #          labeller = "label_value", as.table = TRUE, switch = NULL, drop = TRUE)
@@ -539,3 +542,56 @@ nomes_cut <- c(Fair = "FAIR", Good = "GOOD", `Very Good` = "VERY GOOD",
 ggplot(diamonds, aes(x = carat, y = price)) + geom_point() +
   facet_wrap(~cut, scales = 'free_y', labeller = labeller(cut = nomes_cut))
 
+#9.5
+library(ggThemeAssist)
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() +
+  labs(title = 'carat vs price') + theme(text = element_text(face = 'bold'),
+                                         panel.grid.major = element_line(colour = 'gray80'),
+                                         axis.title = element_text(size = 14),
+                                         panel.background = element_rect('gray100'))
+
+p <- ggplot(diamonds, aes(x = carat, y = price)) + geom_point()
+
+p + theme_gray() + labs(title = "theme_gray()")
+p + theme_bw() + labs(title = "theme_bw()")
+p + theme_linedraw() + labs(title = "theme_linedraw()")
+p + theme_light() + labs(title = "theme_light()")
+p + theme_minimal() + labs(title = "theme_minimal()")
+p + theme_classic() + labs(title = "theme_classic()")
+p + theme_dark() + labs(title = "theme_dark()")
+p + theme_void() + labs(title = 'theme_void')
+
+library(hrbrthemes)
+ggplot(diamonds, aes(x = carat, y = price)) + geom_point() +
+  labs(title = "theme_ipsum()") + theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#como esse comando os graficos do scrip terão o mesmo tema
+theme_set(theme_ipsum(plot_title_size = 12, axis_title_size = 10) + theme(text = element_text(angle = 0)))
+
+#9.6
+#guide_legend(title = waiver(), title.position = NULL, title.theme = NULL,
+#             title.hjust = NULL, title.vjust = NULL, label = TRUE,
+#             label.position = NULL, label.theme = NULL, label.hjust = NULL,
+#             label.vjust = NULL, keywidth = NULL, keyheight = NULL,
+#             direction = NULL, default.unit = "line", override.aes = list(),
+#             nrow = NULL, ncol = NULL, byrow = FALSE, reverse = FALSE, order = 0, ...)
+
+#guide_colourbar(title = waiver(), title.position = NULL, title.theme = NULL,
+#                title.hjust = NULL, title.vjust = NULL, label = TRUE,
+#                label.position = NULL, label.theme = NULL, label.hjust = NULL,
+#                label.vjust = NULL, barwidth = NULL, barheight = NULL, nbin = 20,
+#                raster = TRUE, ticks = TRUE, draw.ulim = TRUE, draw.llim = TRUE,
+#                direction = NULL, default.unit = "line", reverse = FALSE, order = 0, ...)
+
+ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = cut)) + geom_point() +
+         guides(color = guide_legend(title = "cor", title.position = "left", keywidth = 5),
+                shape = guide_legend(title =  "Forma", title.position = "right", override.aes = aes(size = 5)))
+
+ggplot(diamonds, aes(x = carat, y = price, color = cut, shape = cut)) + geom_point() +
+  guides(color = guide_legend(title = "cor", title.position = "left", keywidth = 5),
+         shape = "none")
+#9.7
+library(treemapify)
+ggplot(G20, aes(area = gdp_mil_usd, fill = hdi, label = country)) + geom_treemap() +
+  geom_treemap_text(fontface = "italic", colour = 'white', place = 'center', grow = TRUE) +
+  theme(legend.position = 'bottom')
