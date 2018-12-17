@@ -8,7 +8,7 @@ library(tidyverse) #tudo
 library(openxlsx) #escrever em xlsx
 library(jsonlite) # obter e usar dados de API
 library(rvest) #facilita o consumo de dados em html
-library(ggplot2) #construção de gráficos
+library(ggplot2) #constru??o de gr?ficos
 library(RColorBrewer) #disco de cores para graficos
 library(ggThemeAssist) #modificar temas dos graficos manualmente
 library(hrbrthemes) #tema interessante usado no cap 9
@@ -28,7 +28,7 @@ summary(senado)
 #1
 read_delim("TA_PRECOS_MEDICAMENTOS.csv", delim = "|")
 #2
-read_fwf("fwf-sample.txt", col_positions = fwf_widths(c(20,10,12),c('nomes', 'estado','código')))
+read_fwf("fwf-sample.txt", col_positions = fwf_widths(c(20,10,12),c('nomes', 'estado','c?digo')))
 
 #### cap 4 ####
 dim(senado)
@@ -74,8 +74,8 @@ while(length(automatico) == 0){
   if(length(automatico) > 0){
     print('o arquivo chegou!!')
     print('inicia a leitura dos dados')
-    print('faz a manipulação')
-    print('envia o email informando a comclusão ')
+    print('faz a manipula??o')
+    print('envia o email informando a comclus?o ')
   } else{
       print('aguardando arquivo...')
       Sys.sleep(5) #codigo espera 5s antes de iniciar o loop novamente
@@ -99,8 +99,8 @@ montanha_russa('paralelepipado')
 head(airquality$Ozone) #selecionar uma coluna do data frame
 tail(airquality$Solar.R)
 class(airquality$Ozone)
-is.vector(airquality$Ozone) #saber se a coluna é um vetor
-unique(senado$Party) # Funçãoqueretornaapenasosvaloresúnicos,semrepetição,deumvetor
+is.vector(airquality$Ozone) #saber se a coluna ? um vetor
+unique(senado$Party) # Fun??o que retorna apenas os valores ?nicos, sem repeti??o, de um vetor
 
 senado[2,]
 senado[2,3]
@@ -116,7 +116,7 @@ head(senadores.partidos)
 senadoreres.pdt.df <- senado %>%
   select(SenatorUpper, Party, State) %>%
   filter(State == 'RJ', Party == 'PMDB') %>%
-  distinct() #semelhante aounique(),trazregistrosúnicossemrepetição
+  distinct() #semelhante ao unique(),traz registros ?nicos semrepeti??o
 head(senadoreres.pdt.df)
 
 senadoreres.pdt.df <- senado %>%
@@ -189,8 +189,8 @@ voto.regiao <- senado2 %>%
   arrange(-quant)
 voto.regiao
 
-voto_coligações <- senado %>%
-  mutate( tipo.coalisao = ifelse(c(GovCoalition, "Coalisão", 'Não_Coalisão')))
+voto_coligaÃ§Ã£es <- senado %>%
+  mutate( tipo.coalisao = ifelse(c(GovCoalition, "CoalisÃ£o", 'NÃ£o_CoalisÃ£o')))
 #### cap 5 ####
 library(tidyverse)
 table1
@@ -229,12 +229,12 @@ table_relatorio
 install.packages('stringr')
 library(stringr)
 
-cnae.texto <- c('10 Fabricaçãodeprodutosalimentícios', '11 Fabricaçãodebebidas',
-                '12 Fabricaçãodeprodutosdofumo', '13 Fabricaçãodeprodutostêxteis',
-                '14 Confecção deartigosdovestuárioeacessórios',
-                '15 Preparaçãodecourosefabricaçãodeartefatosdecouro,artigosparaviagemecalçados',
-                '16 Fabricaçãodeprodutosdemadeira',
-                '17 Fabricaçãodecelulose,papeleprodutosdepapel')
+cnae.texto <- c('10 Fabrica??odeprodutosaliment?cios', '11 Fabrica??odebebidas',
+                '12 Fabrica??odeprodutosdofumo', '13 Fabrica??odeprodutost?xteis',
+                '14 Confec??o deartigosdovestu?rioeacess?rios',
+                '15 Prepara??odecourosefabrica??odeartefatosdecouro,artigosparaviagemecal?ados',
+                '16 Fabrica??odeprodutosdemadeira',
+                '17 Fabrica??odecelulose,papeleprodutosdepapel')
 cnae <- str_sub(cnae.texto, 0, 2)
 texto <- str_sub(cnae.texto,4)
 
@@ -247,8 +247,8 @@ str_replace_all(cnpj, '\\.|/|-', '')
 #01
 voto_coligacoes <- senado %>%
   select( Vote, GovCoalition) %>%
-  mutate( tipo.coalisao = ifelse(GovCoalition%in%c('TRUE'), "Coalisão", 'Não_Coalisão')) %>%
-  mutate(Voto = ifelse(Vote%in%c('S'),'Votos_SIM', ifelse(Vote%in%c('N'),'Votos_NÃO', 'Outros'))) %>%
+  mutate( tipo.coalisao = ifelse(GovCoalition%in%c('TRUE'), "Coalis?o", 'N?o_Coalis?o')) %>%
+  mutate(Voto = ifelse(Vote%in%c('S'),'Votos_SIM', ifelse(Vote%in%c('N'),'Votos_N?O', 'Outros'))) %>%
   group_by(tipo.coalisao, Voto)%>%
   summarise(GovCoalition = n())%>%
   spread(key = tipo.coalisao, value = GovCoalition)
@@ -279,7 +279,7 @@ band_members %>% inner_join(band_instruments)
 
 band_instruments2
 str(band_instruments2)
-band_members %>% inner_join(band_instruments2, by= c('name' = 'artist') ) #é preciso especificar qual é a chave
+band_members %>% inner_join(band_instruments2, by= c('name' = 'artist') ) #? preciso especificar qual ? a chave
 
 setwd('dados')
 
@@ -290,7 +290,7 @@ str(departamentos)
 final <- empregados %>% inner_join(departamentos, by = c('Employee' = 'Manager'))
 final
 
-band_members %>% left_joi(band_instruments2, by= c('name' = 'artist') ) #é preciso especificar qual é a chave
+band_members %>% left_joi(band_instruments2, by= c('name' = 'artist') ) #? preciso especificar qual ? a chave
 final2 <- empregados %>% left_join(departamentos, by = c('Employee' = 'Manager'))
 final2
 
@@ -303,7 +303,7 @@ band_members %>% full_join(band_instruments2, by = c('name' = 'artist'))
 final4 <- departamentos %>% full_join(empregados, by = c('Manager' = 'Employee'))
 final4
 
-#exercícios
+#exerc?cios
 #1
 aeroporto <- nycflights13::airports %>% select(name, faa)
 voos <- nycflights13::flights %>% select(origin,dest)
@@ -324,16 +324,16 @@ finish = finish %>% mutate(faa = origin) %>% inner_join(tabela)%>% mutate(origem
   table(finish)
 #2
   participantes <- data.frame(
-    Nome = c('Carlos', 'Maurício', 'Ana Maria', 'Rebeca', 'Patrícia'),
-    Estado = c('Brasília', 'Minas Gerais', 'Goiás', 'São Paulo', 'Ceará'),
+    Nome = c('Carlos', 'Maur?cio', 'Ana Maria', 'Rebeca', 'Patr?cia'),
+    Estado = c('Bras?lia', 'Minas Gerais', 'Goi?s', 'S?o Paulo', 'Cear?'),
     Idade = c(23, 24, 22, 29, 28)
   )
   aprovados <- data.frame(
-    Nome = c('Carlos', 'Patrícia'),
+    Nome = c('Carlos', 'Patr?cia'),
     Pontuacao = c(61, 62)
   )
   eliminados <- data.frame(
-    Nome = c('Maurício', 'Ana Maria', 'Rebeca'),
+    Nome = c('Maur?cio', 'Ana Maria', 'Rebeca'),
     Pontuacao = c(49, 48, 48)
   )
 
@@ -346,8 +346,8 @@ aprovados %>% right_join(participantes)
 #### cap 7 ####
 
 participantes <- data.frame(
-  Nome = c('Carlos', 'Maurício', 'Ana Maria', 'Rebeca', 'Patrícia'),
-  Estado = c('Brasília', 'Minas Gerais', 'Goiás', 'São Paulo', 'Ceará'),
+  Nome = c('Carlos', 'Maur?cio', 'Ana Maria', 'Rebeca', 'Patr?cia'),
+  Estado = c('Bras?lia', 'Minas Gerais', 'Goi?s', 'S?o Paulo', 'Cear?'),
   Idade = c(23, 24, 22, 29, 28)
 )
 save(participantes,file = "participantes.Rdata")
@@ -371,7 +371,7 @@ str(finish)
 
 #### cap 8 ####
 library(jsonlite)
-
+library(curl)
 hadley.rep <- jsonlite::fromJSON("https://api.github.com/users/hadley/repos")
 dim(hadley.rep)
 head(hadley.rep[c('name', 'description')], 15)
@@ -380,9 +380,9 @@ head(hadley.rep[c('name', 'description')], 15)
 proposicoes <- jsonlite::fromJSON("https://dadosabertos.camara.leg.br/swagger/api.html/proposicoes/legislaturas")
 head(proposicoes$dados %>% select(siglaTipo, numero,ementa ,ementa))
 
-# Quandl: pacote que fornece diversos dados econômicos de diversos países;
-# Rfacebook:pacote que facilita o uso da API do facebook(requercadastroprévio);
-# twitterR:pacoteque facilita o uso da API do twitter(requercadastroprévio);
+# Quandl: pacote que fornece diversos dados econ?micos de diversos pa?ses;
+# Rfacebook:pacote que facilita o uso da API do facebook(requercadastropr?vio);
+# twitterR:pacoteque facilita o uso da API do twitter(requercadastropr?vio);
 # ggmap: pacote que facilita o uso da API do googlemaps  
 
 library(rvest) #facilita o consumo de dados em html
@@ -392,7 +392,7 @@ html.table <- html %>% html_node('table')
 dados <- html.tabl %>% html_table()
 dados<- dados %>% select(-'Lista de emissoras')
 
-#exercícios
+#exerc?cios
 #1
 fut <- read_html("http://globoesporte.globo.com/futebol/brasileirao-serie-a/")
 fut.table <- fut %>% html_node('table')
@@ -410,7 +410,7 @@ data('mtcars')
 
 g <- ggplot(mtcars) # inicia o plot
 # Adicionar pontos (geom_point) e
-# vamos mapear variáveis a elementos estéticos dos pontos
+# vamos mapear vari?veis a elementos est?ticos dos pontos
 # Size=3 define o tamanho de todos os pontos
 g <- g + geom_point(aes(x = hp, y = mpg, color = factor(am)), size = 3)
 
@@ -418,14 +418,14 @@ g <- g + geom_point(aes(x = hp, y = mpg, color = factor(am)), size = 3)
 g <- g + scale_color_manual("Automatic", values = c('red', 'blue'), labels = c('Yes', 'No'))
 
 #rotulos/titulos
-g <- g + labs(title = 'Relação entre potêcia, consumo e tipo de câmbio', y = 'Consumo', x = 'Potência')
+g <- g + labs(title = 'Rela??o entre pot?cia, consumo e tipo de c?mbio', y = 'Consumo', x = 'Pot?ncia')
 g
 
-#fazendo em um único bloco
+#fazendo em um ?nico bloco
 ggplot(mtcars) +
   geom_point(aes(x = hp, y = mpg, color = factor(am)), size = 3) +
   scale_color_manual("Automatic", values = c('red', 'blue'), labels = c('Yes', 'No')) +
-  labs(title = 'Relação entre potêcia, consumo e tipo de câmbio', y = 'Consumo', x = 'Potência')
+  labs(title = 'Rela??o entre pot?cia, consumo e tipo de c?mbio', y = 'Consumo', x = 'Pot?ncia')
 
 ####### 9.1
 g1 <- ggplot(mtcars, aes(y = mpg, x = disp)) + geom_point(); g1
@@ -461,11 +461,11 @@ ggplot(Wage, aes(x = age, y = wage, color = education)) + geom_point() +
 #scale_y_discrete(..., expand = waiver(), position = "left")
 
 ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
-  scale_x_discrete('calote', labels = c('não', 'sim')) + 
+  scale_x_discrete('calote', labels = c('n?o', 'sim')) + 
   labs(y = 'Valor devido depois do pagamento')
 #mudando a ordem
 ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
-  scale_x_discrete('calote',limits =  c('Yes', 'No'),labels = c('sim', 'não')) + 
+  scale_x_discrete('calote',limits =  c('Yes', 'No'),labels = c('sim', 'n?o')) + 
   labs(y = 'Valor devido depois do pagamento')
 
 #aceita apenas em dia, mes, ano // date
@@ -477,7 +477,7 @@ ggplot(Default, aes(x = default, y = balance )) + geom_boxplot() +
  #                labels = waiver(), date_labels = waiver(), minor_breaks = waiver(),
   #               date_minor_breaks = waiver(), limits = NULL, expand = waiver())
 
-# o argumento date_labes possibilidades de alterar o modo como as datas são apresentadas
+# o argumento date_labes possibilidades de alterar o modo como as datas s?o apresentadas
 
 ggplot(economics, aes(x = date, y = unemploy)) + geom_line()
 
@@ -516,14 +516,14 @@ ggplot(Wage, aes(y = wage, x = age, color = education)) + geom_point() +
 #para formato grid
 #facet_grid(facets, margins = FALSE, scales = "fixed", space = "fixed", shrink = TRUE,
 #          labeller = "label_value", as.table = TRUE, switch = NULL, drop = TRUE)
-#para formato wrap; converte paieneis de uma dimensão para duas dimensões 
+#para formato wrap; converte paieneis de uma dimens?o para duas dimens?es 
 #facet_wrap(facets, nrow = NULL, ncol = NULL, scales = "fixed", shrink = TRUE,
 #          labeller = "label_value", as.table = TRUE, switch = NULL, drop = TRUE,dir = "h")
 
 #exemplo
 ggplot(diamonds, aes(x = carat, y = price )) + geom_point()
 
-# com facet_wrap; comparar com as relações com diferentes grupos
+# com facet_wrap; comparar com as rela??es com diferentes grupos
 ggplot(diamonds, aes(x = carat, y = price)) + geom_point() + facet_wrap(~ cut)
 #usamos o cut para mostras os graficos dessa variavel
 
@@ -565,7 +565,7 @@ library(hrbrthemes)
 ggplot(diamonds, aes(x = carat, y = price)) + geom_point() +
   labs(title = "theme_ipsum()") + theme_ipsum(plot_title_size = 12, axis_title_size = 10)
 
-#como esse comando os graficos do scrip terão o mesmo tema
+#como esse comando os graficos do scrip ter?o o mesmo tema
 theme_set(theme_ipsum(plot_title_size = 12, axis_title_size = 10) + theme(text = element_text(angle = 0)))
 
 #9.6
@@ -595,3 +595,149 @@ library(treemapify)
 ggplot(G20, aes(area = gdp_mil_usd, fill = hdi, label = country)) + geom_treemap() +
   geom_treemap_text(fontface = "italic", colour = 'white', place = 'center', grow = TRUE) +
   theme(legend.position = 'bottom')
+
+#9.8
+library(hrbrthemes)
+library(gapminder) #base de dados
+
+gapminder %>% filter(year == max(year)) %>% ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() + labs(title = "rela??o entre renda per capita e expectativa de vida",
+                          x = 'renda per capita', y = 'expectativa de vida') + 
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+gapminder %>% filter(year == max(year)) %>% ggplot(aes(x = gdpPercap, y = lifeExp)) +
+  geom_point() + scale_x_log10() + 
+  labs(title = "rela??o entre renda per capita e expectativa de vida",
+                      x = 'renda per capita (escala  log10)', y = 'expectativa de vida') + 
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+gapminder %>% filter(year == max(year)) %>% ggplot(aes(x = gdpPercap, y = lifeExp, color = continent, 
+                                                       shape = continent)) +
+  geom_point() + scale_x_log10() + scale_color_discrete('Continente') +
+  scale_shape_discrete('Continente') + 
+  labs(title = 'rela??o entre renda per capita e expectativa de vida 2007',
+       x = 'renda per capita (escala log10', y = 'expectativa de vida') +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#9.9
+gapminder %>% filter(year == max(year)) %>% 
+  ggplot(aes(x = gdpPercap, y = lifeExp, color= continent, shape = continent)) +
+  geom_point(fill = "black", size= 3, stroke = 1) + scale_x_log10() + scale_color_discrete("Continente") +
+  scale_shape_manual("Continente", values = c(19, 21, 22, 23, 24)) +
+  labs(title = "RelaÃ§Ã£o entre Renda per Capita e Expectativa de Vida - 2007",
+       x = "Renda per Capita (escala log 10)",
+       y = "Expectativa de Vida")
+
+gapminder %>% filter( year == max(year)) %>% ggplot(aes(x = gdpPercap, y = lifeExp, size = pop)) + geom_point()+
+scale_size_continuous("PopulaÃ§Ã£o (milhÃµes)", labels = function(x) round(x/1e6)) + scale_x_log10() +
+  labs(title = "RelaÃ§Ã£o entre Renda per Capita e Expectativa de Vida - 2007",
+       x = "Renda per Capita (escala log 10)", y = "Expectativa de Vida") + 
+  theme_ipsum(plot_title_size = 12, axis_text_size = 10)
+
+#9.10
+#geom_bar(mapping = NULL, data = NULL, stat = "count", position = "stack", ...,
+#         width = NULL, binwidth = NULL, na.rm = FALSE, show.legend = NA,
+#         inherit.aes = TRUE)
+#geom_col(mapping = NULL, data = NULL, position = "stack", ...,
+#         width = NULL, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+
+#usando o geom_bar
+ggplot(diamonds,aes( x = cut))+ geom_bar() + theme_ipsum(plot_title_size = 12, axis_title_size = 10) 
+
+#definindo o y com stat = identity
+gapminder %>% filter(year == max(year), continent == "Americas") %>% ggplot(aes(x=country, y= lifeExp))+
+  geom_bar(stat = 'identity', fill= 'dodgerblue')+ 
+  labs(title = "Expectativa de vida por paÃ­s", subtitle = "2007",  x = "PaÃ­s",  y = "Expectativa de Vida") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+#usando geom_col
+gapminder %>% filter(year == max(year), continent == "Americas") %>% ggplot(aes(x=country, y= lifeExp)) +
+  geom_col(fill = "dodgerblue") + 
+  labs(title = "Expectativa de vida por paÃ­s", subtitle = "2007", x = "PaÃ­s",  y = "Anos") + 
+  theme(axis.text.x = element_text(angle = 65, hjust = 1))
+
+#ordenando o eixo x #usando o reorder
+gapminder %>% filter(year == max(year), continent == "Americas") %>% ggplot(aes(x= reorder(country, -lifeExp), y= lifeExp)) +
+  geom_col(fill = "dodgerblue") + 
+  labs(title = "Expectativa de vida por paÃ­s (com o -X)", subtitle = "2007", x = "PaÃ­s",  y = "Anos") + 
+  theme(axis.text.x = element_text(angle = 65, hjust = 1))
+
+#comparando as mÃ©dias
+gapminder %>% filter( year %in% c(1957, 2007)) %>% 
+  # Converte o ano para factor - serÃ¡ categoria no grÃ¡fico
+  mutate(year = factor(year)) %>% group_by(continent, year) %>% summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x= continent, y= lifeExp, fill=year)) + geom_col() +
+  theme_ipsum(plot_title_size = 12, axis_text_size = 10)
+
+#ordenado
+gapminder %>% filter( year %in% c(1957, 2007)) %>% 
+  # Converte o ano para factor - serÃ¡ categoria no grÃ¡fico
+  mutate(year = factor(year)) %>% group_by(continent, year) %>% summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x= reorder(continent, lifeExp), y= lifeExp, fill=year)) + geom_col() +
+  theme_ipsum(plot_title_size = 12, axis_text_size = 10)
+
+#colocando as barras lado a lado #position = "dodge"
+gapminder %>% filter(year %in% c(1957, 2007)) %>% 
+  # Converte o ano para factor - serÃ¡ categoria no grÃ¡fico
+  mutate(year = factor(year)) %>% group_by(continent, year) %>% summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x= continent, y = lifeExp, fill = year)) +
+  geom_col(position = "dodge") + 
+  labs(title = "Expectativa de vida por continente", x = "Continente", y = "Anos", fill = "Ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#colocando as barras na horizontal #coord_flip()
+gapminder %>% filter(year %in% c(1957, 2007)) %>% 
+  # Converte o ano para factor - serÃ¡ categoria no grÃ¡fico
+  mutate(year = factor(year)) %>% group_by(continent, year) %>% summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x= continent, y = lifeExp, fill = year)) +
+  geom_col(position = "dodge") + coord_flip()+
+  labs(title = "Expectativa de vida por continente", x = "Continente", y = "Anos", fill = "Ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#9.11
+#geom_line(mapping = NULL, data = NULL, stat = "identity", position = "identity",
+#          na.rm = FALSE, show.legend = NA, inherit.aes = TRUE, ...)
+
+#por linhas #geom_line()
+gapminder %>% group_by(continent, year) %>% summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x= year, y= lifeExp, color= continent)) + geom_line() +
+           labs(title = "EvoluÃ§Ã£o da expectativa de vida por continente", x = "Ano", y = "Anos de vida",
+                color = "Continente") + theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+#por linhas com marcaÃ§Ã£o dos perÃ­odos #geom_line()
+gapminder %>% group_by(continent, year) %>% summarise(lifeExp = mean(lifeExp)) %>%
+  ggplot(aes(x= year, y= lifeExp, color= continent)) + geom_line() + geom_point(aes(shape = continent))+
+  labs(title = "EvoluÃ§Ã£o da expectativa de vida por continente", x = "Ano", y = "Anos de vida",
+       color = "Continente") + theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#9.12
+#geom_freqpoly(mapping = NULL, data = NULL, stat = "bin",
+# position = "identity", ..., na.rm = FALSE, show.legend = NA,
+# inherit.aes = TRUE)
+#geom_histogram(mapping = NULL, data = NULL, stat = "bin",
+#               position = "stack", ..., binwidth = NULL, bins = NULL, na.rm = FALSE,
+#               show.legend = NA, inherit.aes = TRUE)
+
+#usando o geom_histogram
+gapminder %>% filter(year == 2007) %>% ggplot(aes(x= lifeExp)) + 
+  geom_histogram(binwidth = 5, fill = 'dodgerblue', color= "black") +
+  labs(title = "DistribuiÃ§Ã£o da expectativa vida", x = "Anos", y = "Contagem") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#usando o geom_freqpoly
+gapminder %>% filter(year == 2007) %>% ggplot(aes(x= lifeExp)) + 
+  geom_freqpoly(binwidth = 5) +
+  labs(title = "DistribuiÃ§Ã£o da expectativa vida", x = "Anos", y = "Contagem") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#tranformando em proporÃ§Ãµes
+gapminder %>% filter(year == 2007) %>%
+  ggplot(aes(x = lifeExp)) +
+  geom_histogram(aes(y = ..count../sum(..count..)),binwidth = 5, fill = 'dodgerblue', color = 'black') +
+  labs(title = "DistribuiÃ§Ã£o da expectativa vida", x = "Anos", y = "ProporÃ§Ã£o") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#9.13
+ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_boxplot(fill= "dodgerblue") +
+  labs(x= "Ano", y= "Anos de vida", title = "DistribuiÃ§Ã£o da expectativa de vida por ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
