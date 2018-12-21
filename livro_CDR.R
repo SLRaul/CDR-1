@@ -738,6 +738,170 @@ gapminder %>% filter(year == 2007) %>%
   theme_ipsum(plot_title_size = 12, axis_title_size = 10)
 
 #9.13
+#usando o geom_boxplot()
 ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_boxplot(fill= "dodgerblue") +
   labs(x= "Ano", y= "Anos de vida", title = "Distribuição da expectativa de vida por ano") +
   theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#usando o geom_violin()
+ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_violin(fill= "orange") +
+  labs(x= "Ano", y= "Anos de vida", title = "Distribuição da expectativa de vida por ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#fazendo por pontos sem "ruido"
+ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_point(fill= "orange") +
+  labs(x= "Ano", y= "Anos de vida", title = "Distribuição da expectativa de vida por ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+#fazendo por pontos com "ruido" com geom_jitter()
+ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_jitter(fill= "orange") +
+  labs(x= "Ano", y= "Anos de vida", title = "Distribuição da expectativa de vida por ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#9.14
+#descobrir qual é o outliner
+gapminder %>% filter(year == 1992, lifeExp == min(lifeExp))
+#fazendo a anotação
+ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_boxplot(fill= "dodgerblue") +
+    annotate('text', x= '1992', y= 27, label= "Ruanda")+
+  labs(x= "Ano", y= "Anos de vida", title = "Distribuição da expectativa de vida por ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+#fazendo anotação com segmentos
+ggplot(gapminder, aes(x= factor(year), y= lifeExp)) + geom_boxplot(fill= "dodgerblue") +
+  annotate('text', x= '1992', y= 27, label= "Ruanda")+
+  annotate('rect', xmin = '1982',xmax= '2002', ymin= 20, ymax= 95, alpha= 0.2) +
+  labs(x= "Ano", y= "Anos de vida", title = "Distribuição da expectativa de vida por ano") +
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+
+#9.15
+# cleveland dot point
+gapminder %>% filter(year== 2007, continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #muda o tipo e cor do ponto
+  geom_point(size= 3, color= "darkgoldenrod3") +
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  #muda o background do grafico
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+
+#agora com mais de uma variavel
+gapminder %>% filter(year %in% c( 1997, 2007), continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #muda o tipo e cor do ponto
+  geom_point(aes(color= factor(year))) +
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  #muda o background do grafico
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+#
+gapminder %>% filter(year %in% c( unique( gapminder$year)), continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #muda o tipo e cor do ponto
+  geom_point(aes(color= factor(year))) +
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  #muda o background do grafico
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+#ligando os pontos
+gapminder %>% filter(year %in% c( 1952, 2007), continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #ligando os pontos
+  geom_line(aes(group= country), color= "gray")+
+  #muda o tipo e cor do ponto
+  geom_point(aes(color = factor(year))) +
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  #muda o background do grafico
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+
+#9.16
+#geom_label(mapping = NULL, data = NULL, stat = "identity", position = "identity",
+#           ..., parse = FALSE, nudge_x = 0, nudge_y = 0,
+#           label.padding = unit(0.25, "lines"), label.r = unit(0.15, "lines"),
+#           label.size = 0.25, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+#geom_text(mapping = NULL, data = NULL, stat = "identity", position = "identity",
+#          ..., parse = FALSE, nudge_x = 0, nudge_y = 0, check_overlap = FALSE,
+#          na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+
+# com geom_text() sem formatação
+gapminder %>% filter(year== 2007, continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #segmento que vai da origem até o ponto
+  geom_segment(x = 0, aes(xend = lifeExp, yend = country), color = "grey50") +
+  geom_point(size= 3, color= "darkgoldenrod3") +
+  #colocando o nome pobremente
+  geom_text(aes(label = round(lifeExp)))+
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+
+# com geom_text() com formatação geom_poit()
+gapminder %>% filter(year== 2007, continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #geom_segment(x = 0, aes(xend = lifeExp, yend = country), color = "grey50") +
+  geom_point(size= 3, color= "darkgoldenrod3") +
+  #colocando o nome com formatação
+  geom_text(aes(label = round(lifeExp)), nudge_x = 1.5)+
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+
+# com geom_text() com formatação geom_label()
+gapminder %>% filter(year== 2007, continent == "Americas") %>% 
+  ggplot(aes(x= lifeExp, y= reorder(country ,lifeExp)))+
+  #geom_segment(x = 0, aes(xend = lifeExp, yend = country), color = "grey50") +
+  geom_point(size= 3, color= "darkgoldenrod3") +
+  #colocando o nome com formatação
+  geom_label(aes(label = round(lifeExp)), nudge_x = 1.5, size= 2.8)+
+  labs(title = "Expectativa de vida por país - 2007", y= "País", x= "Ano")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+
+#9.17 plotando funcao
+reta <- function(a, b, x) a+b*x
+data <- data.frame(x=seq(0,10, by=0.1)) 
+ggplot(data, aes(x=x)) + stat_function(fun = reta, args = list(a=1, b=2)) +
+  stat_function(fun = reta, args = list(a=1, b=3), col= "red")
+
+sigmoid <- function(a= 1, z)  1/(1+exp(-a*z))
+data <- data.frame(x= -6:6)
+ggplot(data, aes(x=x)) + 
+  stat_function(fun = sigmoid, args = (a=1))+
+  stat_function(fun = sigmoid, args = (a=2), color= "green")+
+  stat_function(fun = sigmoid, args = (a=3), color= "blue")+
+  stat_function(fun = sigmoid, args = (a=4), color= "coral")
+
+logit <- function(a, z)  log(sigmoid(a, z)/(1 - sigmoid(a, z)))
+data <- data.frame(x = -6:6)
+ggplot(data, aes(x = x)) +
+  stat_function(fun = logit, args = list(a = 1), aes(color = "a = 1")) +
+  stat_function(fun = logit, args = list(a = 0.5), aes(color = "a = 0.5")) +
+  stat_function(fun = logit, args = list(a = 2), aes(color = "a = 2"))  
+
+#9.18
+library(readr)
+worlmap <- read_delim('world_map.csv', delim = ";",
+                      locale = locale(encoding = "ISO-8859-1", decimal_mark = ","))
+head(worlmap)
+#removendo a antartica
+world_map<- worlmap %>% filter(id != "Antarctica")
+rm(worlmap)
+#exportando os dados de 2015
+exp.2015 <- read_delim('EXP_2015_PAIS.csv', delim = ";",
+                       locale = locale(encoding = "ISO-8859-1"),
+                       col_types = 'ccd')
+#pareando os dados e juntando
+world_map <- left_join(world_map, exp.2015, by = "NO_PAIS_POR") %>%
+  mutate(class = cut(VL_FOB, breaks = c(0, 1e6, 10e6, 100e6, 1e9, 10e9, Inf)))
+#plotando o grafico mapa
+ggplot(world_map, aes(x = long, y = lat, group = group)) + 
+  geom_polygon(aes(fill = class), col = 'black', size = 0.1) +
+  scale_fill_brewer(palette = "Reds", breaks = levels(world_map$class),
+                    labels = c("(0, 1 Mi]", "(1 Mi, 10 Mi]", "(10 Mi, 100 Mi]",
+                               "(100 Mi, 1 Bi]", "(1 Bi, 10 Bi]", "> 10 Bi"),
+                    na.value = 'grey70') +
+  labs(title = "Exportações Brasileiras - 2015", subtitle = 'Valor FOB') +
+  coord_quickmap() +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
