@@ -12,6 +12,7 @@ library(ggplot2) #constru??o de gr?ficos
 library(RColorBrewer) #disco de cores para graficos
 library(ggThemeAssist) #modificar temas dos graficos manualmente
 library(hrbrthemes) #tema interessante usado no cap 9
+library(ggrepel) #extensão do ggplot
 
 #
 #### cap 3 ####
@@ -877,7 +878,7 @@ ggplot(data, aes(x = x)) +
   stat_function(fun = logit, args = list(a = 0.5), aes(color = "a = 0.5")) +
   stat_function(fun = logit, args = list(a = 2), aes(color = "a = 2"))  
 
-#9.18
+# 9.18 # fazer no windows 10 
 library(readr)
 worlmap <- read_delim('world_map.csv', delim = ";",
                       locale = locale(encoding = "ISO-8859-1", decimal_mark = ","))
@@ -905,3 +906,41 @@ ggplot(world_map, aes(x = long, y = lat, group = group)) +
         axis.text.y = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank())
+
+#gerando um de fora
+library(rgdax)#
+library(maptools)
+library(rgeos)#
+library(broom)
+####
+
+# 9.20 usando extensões
+#9.20.1
+#sem formatação
+library(ggrepel) #extensão do ggplot
+data("mtcars")
+ggplot(mtcars, aes(wt, mpg)) + geom_point(color= "coral") +
+  geom_text(aes(label = row.names(mtcars))) + theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+#com formatação / organizando os rótulos geom_text_repel()
+ggplot(mtcars, aes(wt, mpg)) + geom_point(color= "coral") + geom_text_repel(aes(label = row.names(mtcars)))+
+   theme_ipsum(plot_title_size = 12, axis_title_size = 10)
+#9.20.2 /fazendo gifs
+library(devtools)
+devtools::install_github("dgrtwo/gganimate")
+library(gganimate) #fazer gifs
+
+## exercício
+#1
+library(gapminder)
+library(ggrepel)
+caralho2 <- gapminder %>% filter(year == "2007", continent == "Africa") %>% select(country, lifeExp, pop)
+  gapminder2 %>% filter(year == "2007", continent == "Africa") #%>% 
+  ggplot(caralho2, aes(y=lifeExp, x= (pop)) ) +
+  geom_point(color = "red") + 
+  #geom_label(aes(label = round(lifeExp)), nudge_x = 1.5, size= 2.8)+
+  labs(title = "Expectativa de vida por tamanho da população dos paises Africanos - 2007", y= "Expectativa de vida", x= "Tamanho da população")+
+  geom_text_repel(aes(label = rownames(caralho2)))+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  theme(panel.grid.major.y = element_line(linetype = "dashed"))
+
+  
