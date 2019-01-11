@@ -13,6 +13,10 @@ library(RColorBrewer) #disco de cores para graficos
 library(ggThemeAssist) #modificar temas dos graficos manualmente
 library(hrbrthemes) #tema interessante usado no cap 9
 library(ggrepel) #extensão do ggplot
+library(plotly) #gráficos interativos
+library(xts) #uma opção ao ts() para declarar série de tempo
+library(dygraphs) #biblioteca para a visualização de dados temporais (interativo)
+
 
 #
 #### cap 3 ####
@@ -908,7 +912,7 @@ ggplot(world_map, aes(x = long, y = lat, group = group)) +
         axis.title.y = element_blank())
 
 #gerando um de fora
-library(rgdax)#
+library(rgdax)
 library(maptools)
 library(rgeos)#
 library(broom)
@@ -928,13 +932,17 @@ ggplot(mtcars, aes(wt, mpg)) + geom_point(color= "coral") + geom_text_repel(aes(
 library(devtools)
 devtools::install_github("dgrtwo/gganimate")
 library(gganimate) #fazer gifs
+p <- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, size = pop, color = continent,frame = year)) +
+  geom_point() +  scale_x_log10()
+animation::ani.options(interval = 1)
+x <- gganimate(p, filename = 'images/gapminder1.gif',ani.width = 750,ani.height = 450)
+
 
 ## exercício
 #1
 library(gapminder)
 library(ggrepel)
 caralho2 <- gapminder %>% filter(year == "2007", continent == "Africa") %>% select(country, lifeExp, pop)
-  gapminder2 %>% filter(year == "2007", continent == "Africa") #%>% 
   ggplot(caralho2, aes(y=lifeExp, x= (pop)) ) +
   geom_point(color = "red") + 
   #geom_label(aes(label = round(lifeExp)), nudge_x = 1.5, size= 2.8)+
@@ -943,4 +951,111 @@ caralho2 <- gapminder %>% filter(year == "2007", continent == "Africa") %>% sele
   theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
   theme(panel.grid.major.y = element_line(linetype = "dashed"))
 
-  
+#2  
+
+#3
+library(ISLR)
+  head(Wage)
+Wage %>% filter() %>% ggplot(aes(x= education, y= wage, fill= education)) + 
+  labs(title = "Salário Vs Nivel de escolaridade", x= "Salário", y= "Nível de escolaridade")+
+  theme_ipsum(plot_title_size = 12, axis_title_size = 10) +
+  geom_point() + theme(axis.text.x = element_text(angle = 65, hjust = 1))
+
+#4
+Wage2 <- Wage %>% select(year, maritl, race, region, jobclass, health, health_ins, logwage, wage) #%>%
+Wage2%>% ggplot( aes(x= wage))  +
+geom_histogram(data = Wage2, fill = "grey50", alpha = 0.5)
+ 
+#5
+library(WDI)
+library(dplyr)
+gdp_growth <- WDI(indicator = "NY.GDP.MKTP.KD.ZG", start = 2016, end = 2016, extra = TRUE)
+# Remove regiões - ISO's com números
+gdp_growth <- gdp_growth %>% filter(!is.na(region) & region != "Aggregates" & !is.na(NY.GDP.MKTP.KD.ZG))
+
+gdp_growth %>% filter(year == 2016) 
+
+#### cap 10 ####
+#10.2
+library(plotly) #gráficos interativos
+library(tidyverse)
+p <- ggplot(mtcars, aes(x= hp, y= mpg)) + geom_point()
+ggplotly(p)
+
+#10.3
+#ts(data = NA, start = 1, end = numeric(), frequency = 1,
+#deltat = 1, ts.eps = getOption("ts.eps"), class = , names = )
+x <- rnorm(24, mean = 100, sd= 10)
+x<- ts(x, frequency = 12, start = c(2010,1))
+plot(x)
+
+#install.packages('xts')
+library(xts) #uma opção ao ts() para declarar série de tempo
+xts_df <- data.frame(y = rnorm(365, 100, 10))
+xts_df$data <- seq.Date(as.Date('2011-01-01'),
+                        length.out = 365, by= '1 day')
+xts_df <- xts(x= xts_df[,'y'], order.by = xts_df[,'data'])
+head(xts_df)
+
+install.packages('dygraphs')
+library(dygraphs) #biblioteca para a visualização de dados temporais (interativo)
+lungDeaths <- cbind(mdeaths, fdeaths)
+dygraph(lungDeaths, main = "Mortes por doenças pulmonares - Reino Unido - 1874-1979",
+        ylab = 'Númenos de mortes')%>%
+  dySeries('mdeaths', color = 'magenta', label = 'Homens')%>%
+  dySeries("fdeaths", color = 'blue', label = "mulheres")%>%
+  dyRangeSelector()
+
+#funções para mudar os padrões dos números e datas
+# Alterar rótulos do eixo x e a legenda
+axlabform <- "function(date, granularity, opts, dygraph) {
+var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio',
+'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+return months[date.getMonth()] + \" \" + date.getFullYear()}"
+
+valueform <- "function(ms) {
+var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio',
+'Junho', 'Julho', 'Agosto', 'Setembro',
+'Outubro', 'Novembro', 'Dezembro'];10.3. DYGRAPHS
+var ms = new Date(ms);
+return months[ms.getMonth()] + '/' + ms.getFullYear()}"
+
+valueformy <- "function(value) {
+return (Math.round(value * 100)/100).toString()
+.replace('.', ',')
+.replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')}"
+
+#modificando os padrões de datas
+lungDeaths <- cbind(mdeaths, fdeaths)
+dygraph(lungDeaths, main = "Mortes por doenças pulmonares - Reino Unido - 1874-1979",
+        ylab = 'Númenos de mortes')%>%
+  dySeries('mdeaths', color = 'magenta', label = 'Homens')%>%
+  dySeries("fdeaths", color = 'blue', label = "mulheres")%>%
+  dyAxis('y', valueFormatter = valueformy) %>% 
+  dyAxis('x', axisLabelFormatter = axlabform, valueFormatter = valueformy)
+  dyRangeSelector()
+
+#10.4
+install.packages('leaflat') #não é compativel com a versão 3.4.4
+library(dplyr)
+library(leaflat)
+
+
+#exercícios
+#1
+
+#2
+library(plotly) #gráficos interativos
+library(gapminder)
+dois <- gapminder %>% filter(country == "Iraq") %>% ggplot(aes(x= year, lifeExp)) +geom_point()
+ggplotly(dois)
+
+#3
+head(economics)
+library(dygraphs) #biblioteca para a visualização de dados temporais (interativo)
+economics <- economics %>% select(date, unemploy, pop)
+dygraph(economics, main = "Desempregados comparado com a população", ylab = "numero", periodicity = 'month') %>%
+  dySeries('pop', color =  'blue', label = 'Populção') %>%
+  dySeries('unemploy', color = 'red', label = 'Desempregados') %>%
+  dyRangeSelector()
+
