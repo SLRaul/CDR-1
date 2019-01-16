@@ -16,6 +16,7 @@ library(ggrepel) #extensão do ggplot
 library(plotly) #gráficos interativos
 library(xts) #uma opção ao ts() para declarar série de tempo
 library(dygraphs) #biblioteca para a visualização de dados temporais (interativo)
+library(ModelMetrics) #comparando root mean square errors
 
 
 #
@@ -394,7 +395,7 @@ library(rvest) #facilita o consumo de dados em html
 
 html <- read_html("https://pt.wikipedia.org/wiki/Lista_de_redes_de_televis%C3%A3o_do_Brasil")
 html.table <- html %>% html_node('table')
-dados <- html.tabl %>% html_table()
+dados <- html.tab %>% html_table()
 dados<- dados %>% select(-'Lista de emissoras')
 
 #exerc?cios
@@ -997,7 +998,7 @@ xts_df$data <- seq.Date(as.Date('2011-01-01'),
 xts_df <- xts(x= xts_df[,'y'], order.by = xts_df[,'data'])
 head(xts_df)
 
-install.packages('dygraphs')
+#install.packages('dygraphs')
 library(dygraphs) #biblioteca para a visualização de dados temporais (interativo)
 lungDeaths <- cbind(mdeaths, fdeaths)
 dygraph(lungDeaths, main = "Mortes por doenças pulmonares - Reino Unido - 1874-1979",
@@ -1032,11 +1033,11 @@ dygraph(lungDeaths, main = "Mortes por doenças pulmonares - Reino Unido - 1874-
   dySeries('mdeaths', color = 'magenta', label = 'Homens')%>%
   dySeries("fdeaths", color = 'blue', label = "mulheres")%>%
   dyAxis('y', valueFormatter = valueformy) %>% 
-  dyAxis('x', axisLabelFormatter = axlabform, valueFormatter = valueformy)
+  dyAxis('x', axisLabelFormatter = axlabform, valueFormatter = valueformy)%>%
   dyRangeSelector()
 
 #10.4
-install.packages('leaflat') #não é compativel com a versão 3.4.4
+install.packages('leaflat') #não é compativel com a versão 3.5.2
 library(dplyr)
 library(leaflat)
 
@@ -1053,9 +1054,223 @@ ggplotly(dois)
 #3
 head(economics)
 library(dygraphs) #biblioteca para a visualização de dados temporais (interativo)
-economics <- economics %>% select(date, unemploy, pop)
-dygraph(economics, main = "Desempregados comparado com a população", ylab = "numero", periodicity = 'month') %>%
+economicss <- economics %>% select( unemploy, pop) 
+dygraph(economicss, main = "Desempregados comparado com a população", ylab = "numero", periodicity = 'month') %>%
   dySeries('pop', color =  'blue', label = 'Populção') %>%
   dySeries('unemploy', color = 'red', label = 'Desempregados') %>%
+  dyAxis('y', valueFormatter = valueformy) %>% 
+  dyAxis('x', axisLabelFormatter = axlabform, valueFormatter = valueformy)%>%
   dyRangeSelector()
+
+Y<- ts(economicss, frequency = 12, start = c(1967,1))
+plot(Y)
+ 
+
+#### cap 11 ####
+#tudo feito no rmarkdon
+#all make it in rmardon
+#### cap 12 ####
+#12.1
+#lm() #função que estima o modelo pelo metodo dos minimos quadrados ordinários (mqo)
+?lm()
+
+f <- 'y ~ x'
+class(f)
+class(as.formula(f))
+
+data("mtcars")
+lm(mpg ~ hp, data = mtcars) #sem especificação da contante, R colocou automaticamente
+#plot(mtcars$hp, mtcars$mpg)
+
+lm(mpg ~ hp +1, data = mtcars) #com especificação de contante = 1
+
+lm(mpg ~ hp +0, data = mtcars) #com especificação de constante = 0
+
+#adicionando uma variável
+lm(mpg ~ hp +am, data = mtcars)
+
+#fazendo com todas as variáveis
+lm(mpg ~ ., data = mtcars)
+
+#interalções
+lm(mpg ~ hp +am +hp:am, data = mtcars )
+
+#transformações
+lm(log(mpg) ~ log(hp) +am, data = mtcars)
+#plot(log(mtcars$hp), log(mtcars$mpg))
+
+#usando simbolos
+# o (am + hp)^2 retorna am + hp + am*hp e hp^2 retorna hp
+lm(mpg ~ (am + hp)^2 + hp^2, data = mtcars)
+#quando um símbolo não pode ser usado diretamente usamos o I()
+lm(mpg ~ hp + I(hp ^2), data = mtcars)
+
+library(dplyr)
+mtcars <- mutate(mtcars, cat= sample(c('a','b','c'), size = nrow(mtcars), replace = TRUE))
+lm(mpg ~ hp + cat, data = mtcars)
+
+#lm(formula, data, subset, weights, na.action,
+#   method = "qr", model = TRUE, x = FALSE, y = FALSE, qr = TRUE,
+#   singular.ok = TRUE, contrasts = NULL, offset, ...)
+#tambem pode ser escrito assim:
+lm(mtcars$mpg ~ mtcars$hp)
+lm(log(mtcars$mpg) ~ log(mtcars$hp))
+
+#f(azendo a estimativa de um modelo para o subconjunto
+lm(mpg ~ hp, data = mtcars, subset = (am == 0)) # estimando modelo para carros automáticos
+lm(mpg ~ hp, data = mtcars, subset = (am == 1)) # estimando modelo para carros manuais
+
+#utilizando um vetor de pessos na estimação 
+lm(mpg ~ hp, data = mtcars, weights = gear) #
+
+#sumarios das estimativas
+summary((lm(mpg ~ hp, data = mtcars)))
+
+#acesando os resultados
+fit <- (lm(mpg ~ hp, data = mtcars))
+is.list(fit) #confirmando se é uma lista
+ls(fit) #listando os elementos da lista
+#acessando os elementos da lista
+fit$model
+fit$coefficients
+fit$residuals
+
+#acessando os elementos da lista por meio de função
+coefficients(fit)
+residuals(fit)[1:5]
+
+#predição
+set.seed(13034)#para replicação
+#70% dos dados
+idx <- sample(nrow(mtcars), 0.7*ncol(mtcars), replace = FALSE)
+train <- mtcars[idx,]
+test <- mtcars[-idx,]
+#dois modelos
+fit1 <- lm(mpg ~ hp, data = mtcars)
+fit2 <- lm(mpg ~ hp +am +disp, data = mtcars)
+#prdições
+pred1 <- predict(fit1, newdata = test[,-1])
+pred2 <- predict(fit2, newdata = test[,-1])
+#comparando root mean square errors
+library(ModelMetrics)
+rmse(pred1, test[,'mpg'])
+rmse(pred2, test[,'mpg'])
+
+#classificação
+library(ISLR)
+data('Smarket')
+head(Smarket)
+
+train <- Smarket %>% filter(Year == 2004) %>% select(-Year)
+teste <- Smarket %>% filter(Year == 2005) %>% select(-Year)
+#estimando os modelos
+fit <- glm(Direction ~ . -Today, family= binomial(), data= train)
+summary(fit)
+#fazendo a predição
+pred <- predict(fit, teste, type = 'response') #Estima a prob do evento de interesse
+# 'link' (deful) passa logit(valor de predição linear)
+# 'response'Estima a prob do evento de interesse
+# 'terms' retorna a matriz de com a predição linear de cada variavel explicativa
+pred <- ifelse(pred > 0.5, "Up", "Down")
+pred <- factor(pred, levels = c("Down", "Up"))
+
+#avaliando o erro de classificação
+#taxa de erro
+ce(teste$Direction, pred)
+#taxa de erro é muito alta
+#recomenda-se estimar com duas variáveis
+fit <- glm(Direction ~ Lag1+Lag2, family= binomial(), data= train)
+summary(fit)
+#fazendo a predição
+pred <- predict(fit, teste, type = 'response') #Estima a prob do evento de interesse
+pred <- ifelse(pred > 0.5, "Up", "Down")
+pred <- factor(pred, levels = c("Down", "Up"))
+
+#avaliando o erro de classificação
+#taxa de erro
+ce(teste$Direction, pred)
+
+#exercícios
+#1
+library(ISLR)
+data(Wage)
+train <- Wage %>% filter(year == 2008) 
+teste <- Wage %>% filter(year == 2009) 
+#2
+fit <- lm(logwage ~ race +age +jobclass, data = Wage)
+#3
+predict(fit, teste)[1:5]
+#4
+library(ModelMetrics) #comparando root mean square errors
+rmse(fit, test[, age])
+#5
+library(ISLR)
+library(ModelMetrics)
+idx <- sample(nrow(Wage), 0.7 * nrow(Wage))
+train <- Wage[idx, ]
+test <- Wage[idx, ]
+fit <- lm(logwage ~ age + education + maritl + health_ins +race +health, data = train)
+pred <- predict(fit, test)
+rmse(actual = test$logwage, predicted = pred)
+#o rmse tem um valor bem proximo, mesmo acrescentando novas variaveis
+
+
+#### cap 13 ####
+#13.2 carregando os dados
+library(tidyverse)
+library(titanic)
+data('titanic_train')
+# dados de treino
+head(titanic_train)
+
+#13.3 manipulando os dados
+summary(titanic_train)
+
+#mudando a vaariável survived
+titanic_train <- titanic_train %>% mutate( Survived = factor(Survived))
+levels(titanic_train$Survived)<- c('não', 'sim')
+
+# Ajeitando a variável Name
+titanic_train <- titanic_train %>% mutate(title= str_extract(tolower(Name), '[a-z]{1,}\\.'))
+titanic_train %>% group_by(title) %>% summarise(n= n()) %>% arrange(-n)
+
+#diminuindo as classes de title
+classe_de_interesse <- c("mr.", 'miss.', 'mrs.', 'master.')
+titanic_train <- titanic_train %>% 
+  mutate(title= ifelse(title %in% classe_de_interesse, title, "other"))
+
+#13.4 Idade
+#atribuindo valor aos missng values por conta do modelo
+#será inserido amediana da idade
+titanic_train <- titanic_train %>% group_by(Sex, title) %>%
+  mutate(Age= ifelse(is.na(Age), median(Age, na.rm = TRUE), Age))
+summary(titanic_train$Age)
+
+#crie duas variáveis
+head(titanic_train)
+unique(titanic_train$Embarked)
+titanic_train<- titanic_train %>% mutate(Embarked = ifelse(Embarked%in%c("C"), "Cherbourg",
+                                           ifelse(Embarked%in%c('S'), 'Southampton', 
+                                                  ifelse(Embarked%in%c("Q"), 'Queenstown', "Desconhecido"))))
+
+ 
+# 13.5 Visualização
+library(hrbrthemes)
+theme_set(theme_ipsum(base_size = 10))
+ggplot(titanic_train, aes(x= Age))+
+  geom_histogram(boundary= 0, fill= "#223e63", bins = 20)
+
+ggplot(titanic_train, aes(x= Age, fill= Survived)) +
+  geom_histogram(boundary= 0, bins = 20) + facet_wrap(~Survived)+
+  scale_fill_ipsum()
+
+ggplot(titanic_train, aes(x= Sex, fill= Survived))+
+  geom_bar()+ labs(title = "Número de passageiros por sexo", 
+                   y= "contagem", x=  "Sexo")
+
+titanic_train %>% group_by(Sex, Survived) %>% summarise(n = n())%>%
+  group_by(Sex) %>% mutate(prop = n/sum(n)*100) %>% 
+  ggplot(aes(x= Sex, y= prop, fill= Survived))+
+  geom_col()+ labs(title = "Proporção de sobrevivencia por sexo",
+                   y= "%", x= "Sexo") + scale_fill_ipsum("Sobreviveu")
 
