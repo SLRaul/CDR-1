@@ -914,9 +914,18 @@ ggplot(world_map, aes(x = long, y = lat, group = group)) +
 
 #gerando um de fora
 library(rgdax)
+library(rgdal)
 library(maptools)
 library(rgeos)#
 library(broom)
+
+ogrListLayers('dados/mapas/mg_municipios/31MUE250GC_SIR.shp') # nao abre os dados
+
+mg_mapa <- readOGR('dados/mapas/mg_municipios/31MUE250GC_SIR.shp',
+layer = '31MUE250GC_SIR')# nao abre os dados
+
+
+
 ####
 
 # 9.20 usando extensões
@@ -936,6 +945,7 @@ library(gganimate) #fazer gifs
 p <- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, size = pop, color = continent,frame = year)) +
   geom_point() +  scale_x_log10()
 animation::ani.options(interval = 1)
+#codigo stá no modo antigo
 x <- gganimate(p, filename = 'images/gapminder1.gif',ani.width = 750,ani.height = 450)
 
 
